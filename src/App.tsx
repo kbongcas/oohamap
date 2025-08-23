@@ -7,7 +7,9 @@ import Menubar from './Menubar';
 
 const SCALE_BY = 1.2
 const MARKER_SCALE_MIN = .5
-const MARKER_SCALE_MAX = 1.5
+const MARKER_SCALE_MAX = 2.0
+const ZOOM_MAX = 6.0
+const ZOOM_MIN = .6
 
 function App() {
 
@@ -41,7 +43,10 @@ function App() {
       direction = -direction;
     }
 
-    const newScale = direction > 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY;
+
+    const scaleBy = direction > 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY;
+    const newScale = Math.max(ZOOM_MIN, Math.min(scaleBy, ZOOM_MAX));
+
     stage.scale({ x: newScale, y: newScale });
     setScale(newScale)
     const newPos = {
@@ -63,11 +68,18 @@ function App() {
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     console.log('dropped')
+    const stage = stageRef?.current
     stageRef?.current?.setPointersPositions(event);
     const pointer = stageRef?.current?.getPointerPosition()
+    if (stage === null) return
     if (pointer === null || pointer === undefined) return
     console.log(pointer.x, pointer.y)
-    setMarkers([...markers, { x: pointer.x, y: pointer.y }])
+    const point = {
+      x: (pointer.x - stage.x()) / scale,
+      y: (pointer.y - stage.y()) / scale,
+    };
+
+    setMarkers([...markers, { x: point.x, y: point.y }])
   }
   const enableDropping = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -103,7 +115,7 @@ function App() {
                 y={m.y}
                 scaleX={markerScale.x}
                 scaleY={markerScale.y}
-                radius={12}
+                radius={5}
                 fill="green"
                 draggable
               />)
