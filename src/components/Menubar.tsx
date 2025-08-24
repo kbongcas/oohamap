@@ -1,35 +1,29 @@
+
 const Menubar = () => {
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
     event.dataTransfer.setData('text', event.currentTarget.id);
     console.log("drag started")
   }
-  const enableDropping = (event: React.DragEvent<HTMLDivElement>) => { 
-    event.preventDefault();
-  }
-
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    const id = event.dataTransfer.getData('text');
-    console.log(`Somebody dropped an element with id: ${id}`);
-  }
-
 
   return (
     <ul className="menu menu-horizontal bg-base-200 rounded-box mt-6">
       <li>
-        <a className="tooltip" data-tip="Home">
-          <div draggable id="1" onDragStart={handleDragStart}>
+        <a className="tooltip" data-tip="Pin">
+          <div draggable id="pin" onDragStart={handleDragStart} className="bg-opacity-0">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
+              width="32"
+              height="32"
               viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              fill="none"
+              stroke="#000000"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+              <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />
             </svg>
           </div>
         </a>
