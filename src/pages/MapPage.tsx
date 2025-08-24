@@ -1,9 +1,9 @@
 import { useMemo, useRef, useState } from 'react';
-import { Layer, Stage, Image, Group, Circle } from 'react-konva'
+import { Layer, Stage, Image } from 'react-konva'
 import Konva from 'konva';
 import useImage from 'use-image';
 import Menubar from '../components/Menubar';
-import pinSvg from '../assets/icons/pin.svg'
+import MapMarker from '../components/map-markers/MapMarker';
 
 const SCALE_BY = 1.2
 const MARKER_SCALE_MIN = .5
@@ -16,7 +16,6 @@ function MapPage() {
   const src = "https://i0.wp.com/blog.worldanvil.com/wp-content/uploads/2020/02/Kingsreach-Blue.jpg?resize=1024%2C768&ssl=1"
 
   const [map] = useImage(src, 'anonymous');
-  const [pinImage] = useImage(pinSvg, 'anonymous');
 
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -112,33 +111,16 @@ function MapPage() {
         >
           {
             markers.map((m, i) => {
-              const markerWidth = 24
-              const markerheight = 24
-              return (
-                <Group
-                  key={i}
-                  x={m.x}
-                  y={m.y}
-                  scaleX={markerScale.x}
-                  scaleY={markerScale.y}
-                  draggable
-                >
-                  <Circle
-                    x={markerWidth/2}
-                    y={markerheight/2}
-                    radius={16}
-                    fill="white"
-                    stroke={'black'}
-                  />
-                  <Image
-                    key={i}
-                    image={pinImage}
-                    width={markerWidth}
-                    height={markerheight}
-                    drawBorder={true}
-                  />
-                </Group>
-              )
+              return <MapMarker
+                key={i}
+                x={m.x}
+                y={m.y}
+                scaleX={markerScale.x}
+                scaleY={markerScale.y}
+                width={24}
+                height={24}
+              />
+
             }
             )
 
