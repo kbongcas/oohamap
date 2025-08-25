@@ -1,6 +1,10 @@
 import { Circle, Group, Image } from "react-konva";
 import pinSvg from '../../assets/icons/pin.svg'
 import useImage from 'use-image';
+import { Html } from 'react-konva-utils';
+import { useState, useRef } from "react";
+import Konva from 'konva';
+import icons, { toIconName } from "../../utils/icons";
 
 
 interface MapMarkerProps {
@@ -8,34 +12,50 @@ interface MapMarkerProps {
   y: number;
   scaleX: number;
   scaleY: number;
-  width: number;
-  height: number;
+  icon:  string;
 }
 
-const MapMarker: React.FC<MapMarkerProps> = ({ x, y, scaleX, scaleY, width, height }) => {
+const MapMarker: React.FC<MapMarkerProps> = ({x, y, scaleX, scaleY, icon}) => {
 
-  const [pinImage] = useImage(pinSvg, 'anonymous');
+  const iconName = toIconName(icon)
+  const svg = icons[iconName].svg ?? pinSvg
+  console.log(icon)
+  const [pinImage] = useImage(svg, 'anonymous');
+
+  const width = (pinImage?.width ?? 0)
+  const height = (pinImage?.height ?? 0)
+  
+  const [isHovered, setIsHovered] = useState(false);
+
+  const groupRef = useRef<Konva.Group>(null);
 
   return (
     <Group
+      ref={groupRef}
       x={x}
       y={y}
-      scaleX={scaleX}
-      scaleY={scaleY}
+      scaleX={isHovered ? scaleX * 1.2 : scaleX}
+      scaleY={isHovered ? scaleY * 1.2 :  scaleY}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       draggable
     >
+      { isHovered && <Html>
+        <div className="tooltip tooltip-open bottom-9" data-tip="hello">
+        </div>
+      </Html>
+      }
       <Circle
-        x={width / 2}
-        y={height / 2}
-        radius={16}
+        radius={width}
+        scaleX={.80}
+        scaleY={.80}
         fill="white"
         stroke={'black'}
       />
       <Image
         image={pinImage}
-        width={width}
-        height={height}
-        drawBorder={true}
+        offsetX={width / 2}
+        offsetY={height / 2}
       />
     </Group>
   )

@@ -6,7 +6,7 @@ import Menubar from '../components/Menubar';
 import MapMarker from '../components/map-markers/MapMarker';
 
 const SCALE_BY = 1.2
-const MARKER_SCALE_MIN = .5
+const MARKER_SCALE_MIN = .9
 const MARKER_SCALE_MAX = 2.0
 const ZOOM_MAX = 6.0
 const ZOOM_MIN = .6
@@ -112,13 +112,12 @@ function MapPage() {
           {
             markers.map((m, i) => {
               return <MapMarker
+                icon={m.icon}
                 key={i}
                 x={m.x}
                 y={m.y}
                 scaleX={markerScale.x}
                 scaleY={markerScale.y}
-                width={24}
-                height={24}
               />
 
             }

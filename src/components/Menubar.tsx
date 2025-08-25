@@ -1,57 +1,37 @@
-// @ts-expect-error for svgr
-import PinIcon from '../assets/icons/pin.svg?react'
-
+import icons from "../utils/icons";
 
 const Menubar = () => {
 
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
     event.dataTransfer.setData('text', event.currentTarget.id);
-    console.log("drag started")
+    console.log("drag started id", event.currentTarget.id)
   }
+
+  const PinIcon = icons["pin"].comp
+  const HomeIcon = icons["home"].comp
+  const SwordIcon = icons["sword"].comp
 
   return (
     <ul className="menu menu-horizontal bg-base-200 rounded-box mt-6">
       <li>
-        <a className="tooltip" data-tip="Pin">
+        <a className="tooltip" data-tip="pin">
           <div draggable id="pin" onDragStart={handleDragStart} className="bg-opacity-0">
-            <PinIcon width={24} height={24}/>
+            <PinIcon />
           </div>
         </a>
       </li>
       <li>
-        <a className="tooltip" data-tip="Details">
-          <div draggable id="2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+        <a className="tooltip" data-tip="sword">
+          <div draggable id="sword" onDragStart={handleDragStart} className="bg-opacity-0">
+            <SwordIcon />
           </div>
         </a>
       </li>
       <li>
-        <a className="tooltip" data-tip="Stats">
-          <div draggable id="1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+        <a className="tooltip" data-tip="home">
+          <div draggable id="home" onDragStart={handleDragStart} className="bg-opacity-0">
+            <HomeIcon />
           </div>
         </a>
       </li>
