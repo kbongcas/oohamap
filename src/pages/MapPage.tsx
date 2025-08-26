@@ -4,6 +4,7 @@ import Konva from 'konva';
 import useImage from 'use-image';
 import Menubar from '../components/Menubar';
 import MapMarker from '../components/map-markers/MapMarker';
+import SelectedMapMarker from '../components/map-markers/SelectedMapMarker';
 
 const SCALE_BY = 1.2
 const MARKER_SCALE_MIN = .9
@@ -81,13 +82,27 @@ function MapPage() {
     };
 
     const icon = event.dataTransfer.getData("text/plain");
-    setMarkers([...markers, { icon: icon, x: point.x, y: point.y }])
+    setMarkers([...markers, { icon: icon, x: point.x, y: point.y, label: icon }])
   }
   const enableDropping = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
   }
 
-  const [markers, setMarkers] = useState<{ icon: string, x: number, y: number }[]>([])
+  const [markers, setMarkers] = useState<{ icon: string, x: number, y: number, label: string }[]>([])
+  const [selectedMarker, setSelectedMarker] = useState<{ label: string, id: number} | null>(null)
+
+  const handleSelectedMarker = (selectedId: number) => {
+    const found = markers[selectedId]
+    if (found != null){
+      setSelectedMarker({
+        id: selectedId,
+        label: found.label
+      })
+    }
+    else{
+      setSelectedMarker(null)
+    }
+  }
 
   return (
     <div
@@ -112,6 +127,9 @@ function MapPage() {
           {
             markers.map((m, i) => {
               return <MapMarker
+                label={m.label}
+                onSelected={(id) => handleSelectedMarker(id)}
+                id={i}
                 icon={m.icon}
                 key={i}
                 x={m.x}
@@ -126,8 +144,17 @@ function MapPage() {
           }
         </Layer>
       </Stage>
-      <div className="absolute top-[12px] right-[12px]" >
+      <div className="absolute top-[12px] right-[12px] flex flex-col items-end gap-4" >
         <Menubar />
+        { selectedMarker != null &&
+        <SelectedMapMarker
+            id={selectedMarker.id}
+            label={selectedMarker.label}
+            close={() => setSelectedMarker(null)}
+        />
+        }
+      </div>
+      <div className="absolute top-px] right-[12px]" >
       </div>
       <div className="absolute top-[24px] right-[12px]" >
         {markerScale.x}

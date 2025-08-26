@@ -8,9 +8,13 @@ import HomeIcon from '../assets/icons/home.svg'
 import SwordIconReact from '../assets/icons/sword.svg?react'
 import SwordIcon from '../assets/icons/sword.svg'
 
-export type IconName = "pin" | "home" | "sword";
+// @ts-expect-error for svgr
+import CloseIconReact from '../assets/icons/close.svg?react'
+import CloseIcon from '../assets/icons/close.svg'
 
-const iconNames: IconName[] = ["pin", "home", "sword"];
+export type IconName = "pin" | "home" | "sword" | "close";
+
+const iconNames: IconName[] = ["pin", "home", "sword", "close"];
 
 
 interface IconInfo {
@@ -24,7 +28,8 @@ type IconMap = Record<IconName, IconInfo>
 const icons: IconMap = {
   "pin": { svg: PinIcon, comp: PinIconReact  },
   "home": { svg: HomeIcon, comp: HomeIconReact  },
-  "sword": { svg: SwordIcon, comp: SwordIconReact  }
+  "sword": { svg: SwordIcon, comp: SwordIconReact  },
+  "close": { svg: CloseIcon, comp: CloseIconReact  }
 }
 
 
