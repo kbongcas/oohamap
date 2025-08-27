@@ -1,39 +1,43 @@
-import { useMemo, useRef, useState } from 'react';
-import { Layer, Stage, Image } from 'react-konva'
-import Konva from 'konva';
-import useImage from 'use-image';
-import Menubar from '../components/Menubar';
-import MapMarker from '../components/map-markers/MapMarker';
-import SelectedMapMarker from '../components/map-markers/SelectedMapMarker';
+import { useMemo, useRef, useState } from "react";
+import { Layer, Stage, Image } from "react-konva";
+import Konva from "konva";
+import useImage from "use-image";
+import Menubar from "../components/Menubar";
+import MapMarker from "../components/map-markers/MapMarker";
+import SelectedMapMarker from "../components/map-markers/SelectedMapMarker";
+import { useMapMarkers, type MapMarkerData, useMapMarkersActions } from "../store/mapMarkerStore";
 
-const SCALE_BY = 1.2
-const MARKER_SCALE_MIN = .9
-const MARKER_SCALE_MAX = 2.0
-const ZOOM_MAX = 6.0
-const ZOOM_MIN = .6
+const SCALE_BY = 1.2;
+const MARKER_SCALE_MIN = 0.9;
+const MARKER_SCALE_MAX = 2.0;
+const ZOOM_MAX = 6.0;
+const ZOOM_MIN = 0.6;
 
 function MapPage() {
+  const src =
+    "https://i0.wp.com/blog.worldanvil.com/wp-content/uploads/2020/02/Kingsreach-Blue.jpg?resize=1024%2C768&ssl=1";
 
-  const src = "https://i0.wp.com/blog.worldanvil.com/wp-content/uploads/2020/02/Kingsreach-Blue.jpg?resize=1024%2C768&ssl=1"
-
-  const [map] = useImage(src, 'anonymous');
+  const [map] = useImage(src, "anonymous");
 
   const width = window.innerWidth;
   const height = window.innerHeight;
 
-  const [scale, setScale] = useState(1)
+  const [scale, setScale] = useState(1);
 
   const stageRef = useRef<Konva.Stage>(null);
+
+  const markers: MapMarkerData[] = useMapMarkers();
+  const { addMapMarker } = useMapMarkersActions();
 
   const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
 
     const stage = stageRef.current;
-    if (stage === null) return
-    const oldScale = scale
+    if (stage === null) return;
+    const oldScale = scale;
 
     const pointer = stage.getPointerPosition();
-    if (pointer === null) return
+    if (pointer === null) return;
     const mousePointTo = {
       x: (pointer.x - stage.x()) / oldScale,
       y: (pointer.y - stage.y()) / oldScale,
@@ -45,12 +49,11 @@ function MapPage() {
       direction = -direction;
     }
 
-
     const scaleBy = direction > 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY;
     const newScale = Math.max(ZOOM_MIN, Math.min(scaleBy, ZOOM_MAX));
 
     stage.scale({ x: newScale, y: newScale });
-    setScale(newScale)
+    setScale(newScale);
     const newPos = {
       x: pointer.x - mousePointTo.x * newScale,
       y: pointer.y - mousePointTo.y * newScale,
@@ -60,73 +63,65 @@ function MapPage() {
 
   const markerScale = useMemo(() => {
     if (scale > MARKER_SCALE_MAX) {
-      return { x: 1 / MARKER_SCALE_MAX, y: 1 / MARKER_SCALE_MAX }
+      return { x: 1 / MARKER_SCALE_MAX, y: 1 / MARKER_SCALE_MAX };
+    } else if (scale < MARKER_SCALE_MIN) {
+      return { x: 1 / MARKER_SCALE_MIN, y: 1 / MARKER_SCALE_MIN };
     }
-    else if (scale < MARKER_SCALE_MIN) {
-      return { x: 1 / MARKER_SCALE_MIN, y: 1 / MARKER_SCALE_MIN }
-    }
-    return { x: 1 / scale, y: 1 / scale }
-  }, [scale])
+    return { x: 1 / scale, y: 1 / scale };
+  }, [scale]);
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    console.log('dropped')
-    const stage = stageRef?.current
+    console.log("dropped");
+    const stage = stageRef?.current;
     stageRef?.current?.setPointersPositions(event);
-    const pointer = stageRef?.current?.getPointerPosition()
-    if (stage === null) return
-    if (pointer === null || pointer === undefined) return
-    console.log(pointer.x, pointer.y)
+    const pointer = stageRef?.current?.getPointerPosition();
+    if (stage === null) return;
+    if (pointer === null || pointer === undefined) return;
+    console.log(pointer.x, pointer.y);
     const point = {
       x: (pointer.x - stage.x()) / scale,
       y: (pointer.y - stage.y()) / scale,
     };
 
     const icon = event.dataTransfer.getData("text/plain");
-    setMarkers([...markers, { icon: icon, x: point.x, y: point.y, label: icon }])
-  }
+    addMapMarker({
+      icon: icon,
+      x: point.x,
+      y: point.y,
+      label: icon,
+      showBackground: false,
+      scaleX: markerScale.x,
+      scaleY: markerScale.y,
+    });
+  };
   const enableDropping = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-  }
+  };
 
-  const [markers, setMarkers] = useState<{ icon: string, x: number, y: number, label: string }[]>([])
-  const [selectedMarker, setSelectedMarker] = useState<{ label: string, id: number} | null>(null)
+  const [selectedMarker, setSelectedMarker] = useState<{ label: string; id: number } | null>(null);
 
   const handleSelectedMarker = (selectedId: number) => {
-    const found = markers[selectedId]
-    if (found != null){
+    const found = markers[selectedId];
+    if (found != null) {
       setSelectedMarker({
         id: selectedId,
-        label: found.label
-      })
+        label: found.label,
+      });
+    } else {
+      setSelectedMarker(null);
     }
-    else{
-      setSelectedMarker(null)
-    }
-  }
+  };
 
   return (
-    <div
-      onDragOver={enableDropping}
-      onDrop={handleDrop}
-    >
-      <Stage
-        width={width}
-        height={height}
-        ref={stageRef}
-        onWheel={handleWheel}
-        draggable
-      >
-        <Layer
-          className="border-2"
-        >
+    <div onDragOver={enableDropping} onDrop={handleDrop}>
+      <Stage width={width} height={height} ref={stageRef} onWheel={handleWheel} draggable>
+        <Layer className="border-2">
           <Image image={map} />
         </Layer>
-        <Layer
-          className="border-2"
-        >
-          {
-            markers.map((m, i) => {
-              return <MapMarker
+        <Layer className="border-2">
+          {markers.map((m, i) => {
+            return (
+              <MapMarker
                 label={m.label}
                 onSelected={(id) => handleSelectedMarker(id)}
                 id={i}
@@ -136,31 +131,27 @@ function MapPage() {
                 y={m.y}
                 scaleX={markerScale.x}
                 scaleY={markerScale.y}
+                showBackground={m.showBackground}
               />
-
-            }
-            )
-
-          }
+            );
+          })}
         </Layer>
       </Stage>
-      <div className="absolute top-[12px] right-[12px] flex flex-col items-end gap-4" >
+      <div className="absolute top-[12px] right-[12px] flex flex-col items-end gap-4">
         <Menubar />
-        { selectedMarker != null &&
-        <SelectedMapMarker
+        {selectedMarker != null && (
+          <SelectedMapMarker
             id={selectedMarker.id}
             label={selectedMarker.label}
+            hasBackground={false}
             close={() => setSelectedMarker(null)}
-        />
-        }
+          />
+        )}
       </div>
-      <div className="absolute top-px] right-[12px]" >
-      </div>
-      <div className="absolute top-[24px] right-[12px]" >
-        {markerScale.x}
-      </div>
+      <div className="absolute top-px] right-[12px]"></div>
+      <div className="absolute top-[24px] right-[12px]">{markerScale.x}</div>
     </div>
-  )
+  );
 }
 
-export default MapPage
+export default MapPage;

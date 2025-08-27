@@ -16,9 +16,10 @@ interface MapMarkerProps {
   icon: string;
   onSelected: (id: number) => void
   label: string;
+  showBackground: boolean;
 }
 
-const MapMarker: React.FC<MapMarkerProps> = ({ id, x, y, scaleX, scaleY, icon, onSelected, label}) => {
+const MapMarker: React.FC<MapMarkerProps> = ({ id, x, y, scaleX, scaleY, icon, onSelected, label, showBackground}) => {
 
   const iconName = toIconName(icon)
   const svg = icons[iconName].svg ?? pinSvg
@@ -26,7 +27,6 @@ const MapMarker: React.FC<MapMarkerProps> = ({ id, x, y, scaleX, scaleY, icon, o
 
   const width = (pinImage?.width ?? 0)
   const height = (pinImage?.height ?? 0)
-  const showBackground = false;
 
   const [isHovered, setIsHovered] = useState(false);
 
