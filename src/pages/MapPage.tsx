@@ -3,13 +3,13 @@ import { Layer, Stage, Image } from "react-konva";
 import Konva from "konva";
 import useImage from "use-image";
 import Menubar from "../components/Menubar";
-import MapMarker from "../components/map-markers/MapMarker";
-import SelectedMapMarker from "../components/map-markers/SelectedMapMarker";
-import { useMapMarkers, type MapMarkerData, useMapMarkersActions } from "../store/mapMarkerStore";
+import MapToken from "../components/map/MapToken";
+import { useEntTokens, type EntToken, useEntTokensActions } from "../store/entTokenStore";
+import EntEditor from "../components/map/EntEditor";
 
 const SCALE_BY = 1.2;
-const MARKER_SCALE_MIN = 0.9;
-const MARKER_SCALE_MAX = 2.0;
+const TOKEN_SCALE_MIN = 0.9;
+const TOKEN_SCALE_MAX = 2.0;
 const ZOOM_MAX = 6.0;
 const ZOOM_MIN = 0.6;
 
@@ -18,17 +18,15 @@ function MapPage() {
     "https://i0.wp.com/blog.worldanvil.com/wp-content/uploads/2020/02/Kingsreach-Blue.jpg?resize=1024%2C768&ssl=1";
 
   const [map] = useImage(src, "anonymous");
-
   const width = window.innerWidth;
   const height = window.innerHeight;
-
   const [scale, setScale] = useState(1);
-
   const stageRef = useRef<Konva.Stage>(null);
+  const tokens: EntToken[] = useEntTokens();
+  const { addEntToken } = useEntTokensActions();
+  const [selectedtoken, setSelectedToken] = useState<EntToken | null>(null);
 
-  const markers: MapMarkerData[] = useMapMarkers();
-  const { addMapMarker } = useMapMarkersActions();
-
+  // Inputs
   const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
 
@@ -61,17 +59,8 @@ function MapPage() {
     stage.position(newPos);
   };
 
-  const markerScale = useMemo(() => {
-    if (scale > MARKER_SCALE_MAX) {
-      return { x: 1 / MARKER_SCALE_MAX, y: 1 / MARKER_SCALE_MAX };
-    } else if (scale < MARKER_SCALE_MIN) {
-      return { x: 1 / MARKER_SCALE_MIN, y: 1 / MARKER_SCALE_MIN };
-    }
-    return { x: 1 / scale, y: 1 / scale };
-  }, [scale]);
-
+  // Dropping tokens from menu bar
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    console.log("dropped");
     const stage = stageRef?.current;
     stageRef?.current?.setPointersPositions(event);
     const pointer = stageRef?.current?.getPointerPosition();
@@ -84,33 +73,28 @@ function MapPage() {
     };
 
     const icon = event.dataTransfer.getData("text/plain");
-    addMapMarker({
+    addEntToken({
       icon: icon,
       x: point.x,
       y: point.y,
       label: icon,
       showBackground: false,
-      scaleX: markerScale.x,
-      scaleY: markerScale.y,
+      scaleX: tokenScale.x,
+      scaleY: tokenScale.y,
     });
   };
   const enableDropping = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
   };
 
-  const [selectedMarker, setSelectedMarker] = useState<{ label: string; id: number } | null>(null);
-
-  const handleSelectedMarker = (selectedId: number) => {
-    const found = markers[selectedId];
-    if (found != null) {
-      setSelectedMarker({
-        id: selectedId,
-        label: found.label,
-      });
-    } else {
-      setSelectedMarker(null);
+  const tokenScale = useMemo(() => {
+    if (scale > TOKEN_SCALE_MAX) {
+      return { x: 1 / TOKEN_SCALE_MAX, y: 1 / TOKEN_SCALE_MAX };
+    } else if (scale < TOKEN_SCALE_MIN) {
+      return { x: 1 / TOKEN_SCALE_MIN, y: 1 / TOKEN_SCALE_MIN };
     }
-  };
+    return { x: 1 / scale, y: 1 / scale };
+  }, [scale]);
 
   return (
     <div onDragOver={enableDropping} onDrop={handleDrop}>
@@ -119,19 +103,13 @@ function MapPage() {
           <Image image={map} />
         </Layer>
         <Layer className="border-2">
-          {markers.map((m, i) => {
+          {tokens.map((m) => {
             return (
-              <MapMarker
-                label={m.label}
-                onSelected={(id) => handleSelectedMarker(id)}
-                id={i}
-                icon={m.icon}
-                key={i}
-                x={m.x}
-                y={m.y}
-                scaleX={markerScale.x}
-                scaleY={markerScale.y}
-                showBackground={m.showBackground}
+              <MapToken
+                key={m.id}
+                entToken={m}
+                isSelected={selectedtoken?.id === m.id}
+                onSelected={(entToken) => setSelectedToken(entToken)}
               />
             );
           })}
@@ -139,17 +117,8 @@ function MapPage() {
       </Stage>
       <div className="absolute top-[12px] right-[12px] flex flex-col items-end gap-4">
         <Menubar />
-        {selectedMarker != null && (
-          <SelectedMapMarker
-            id={selectedMarker.id}
-            label={selectedMarker.label}
-            hasBackground={false}
-            close={() => setSelectedMarker(null)}
-          />
-        )}
+        {selectedtoken != null && <EntEditor entToken={selectedtoken} close={() => setSelectedToken(null)} />}
       </div>
-      <div className="absolute top-px] right-[12px]"></div>
-      <div className="absolute top-[24px] right-[12px]">{markerScale.x}</div>
     </div>
   );
 }

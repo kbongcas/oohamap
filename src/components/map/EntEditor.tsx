@@ -1,39 +1,40 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import Editor from "./Editor";
 import { RiCloseCircleFill } from "react-icons/ri";
-import { useMapMarkersActions } from "../../store/mapMarkerStore";
+import { useEntTokensActions, type EntToken } from "../../store/entTokenStore";
 
-interface SelectedMapMarkerProps {
-  label: string;
-  id: number;
-  hasBackground: boolean;
+interface EntEditorProps {
+  entToken: EntToken;
   close: () => void;
 }
 
-type SelectedMapMarkerFormData = {
+type EntEditorFormData = {
   label: string;
-  hasBackground: boolean;
+  showBackground: boolean;
 };
 
-const SelectedMapMarker: React.FC<SelectedMapMarkerProps> = ({ hasBackground, id, label, close }) => {
-  const { setMapMarkerData } = useMapMarkersActions();
+const EntEditor: React.FC<EntEditorProps> = ({ entToken, close }) => {
+  const { setEntToken } = useEntTokensActions();
 
-  const [formData, setFormData] = useState<SelectedMapMarkerFormData>({
-    label,
-    hasBackground,
+  const [formData, setFormData] = useState<EntEditorFormData>({
+    label: entToken.label,
+    showBackground: entToken.showBackground,
   });
+
+  useEffect(() => {
+    setFormData({
+      label: entToken.label,
+      showBackground: entToken.showBackground,
+    });
+  }, [entToken]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setMapMarkerData(id, { showBackground: formData.hasBackground });
+    const data = { ...formData, [name]: value, showBackground: !formData.showBackground };
+
+    setFormData(data);
+    setEntToken(entToken.id, data);
   };
 
   return (
@@ -59,26 +60,23 @@ const SelectedMapMarker: React.FC<SelectedMapMarkerProps> = ({ hasBackground, id
           Marker
         </label>
         <div className="tab-content bg-base-100 border-base-300 p-6">
-          <form onSubmit={handleSubmit}>
+          <form>
             <fieldset className="fieldset bg-base-100 border-base-300 rounded-box border p-4">
               <legend className="fieldset-legend">Token options</legend>
               <label className="label">
                 <input
-                  id="hasBackground"
-                  name="hasBackground"
+                  id="showBackground"
+                  name="showBackground"
                   type="checkbox"
                   className="toggle"
+                  checked={formData.showBackground}
                   onChange={handleChange}
-                  checked={formData.hasBackground}
                 />
                 Token Background
               </label>
               <legend className="fieldset-legend">Color</legend>
               <input type="text" className="input" placeholder="Type here" />
             </fieldset>
-            <button className="btn" type="submit">
-              Submit
-            </button>
           </form>
         </div>
       </div>
@@ -86,4 +84,4 @@ const SelectedMapMarker: React.FC<SelectedMapMarkerProps> = ({ hasBackground, id
   );
 };
 
-export default SelectedMapMarker;
+export default EntEditor;
