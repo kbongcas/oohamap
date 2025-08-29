@@ -1,37 +1,38 @@
 import icons from "../utils/icons";
 
+const PinIcon = icons["pin"].reactComponent;
+const HomeIcon = icons["home"].reactComponent;
+const SwordIcon = icons["sword"].reactComponent;
+
 const Menubar = () => {
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
     event.dataTransfer.setData("text", event.currentTarget.id);
-    console.log("drag started id", event.currentTarget.id);
+    // @TODO: set draw image
+    //event.dataTransfer.setDragImage();
   };
-
-  const PinIcon = icons["pin"].reactComponent;
-  const HomeIcon = icons["home"].reactComponent;
-  const SwordIcon = icons["sword"].reactComponent;
 
   return (
     <ul className="menu menu-horizontal bg-base-200 rounded-box mt-6">
       <li>
-        <a className="tooltip" data-tip="pin">
-          <div draggable id="pin" onDragStart={handleDragStart} className="bg-opacity-0">
+        <div draggable id="pin" onDragStart={handleDragStart} className="bg-opacity-0">
+          <a className="tooltip" data-tip="pin">
             <PinIcon />
-          </div>
-        </a>
+          </a>
+        </div>
       </li>
       <li>
-        <a className="tooltip" data-tip="sword">
-          <div draggable id="sword" onDragStart={handleDragStart} className="bg-opacity-0">
+        <div draggable id="sword" onDragStart={handleDragStart} className="bg-opacity-0">
+          <a className="tooltip" data-tip="sword">
             <SwordIcon />
-          </div>
-        </a>
+          </a>
+        </div>
       </li>
       <li>
-        <a className="tooltip" data-tip="home">
-          <div draggable id="home" onDragStart={handleDragStart} className="bg-opacity-0">
+        <div draggable id="home" onDragStart={handleDragStart} className="bg-opacity-0">
+          <a className="tooltip" data-tip="home">
             <HomeIcon />
-          </div>
-        </a>
+          </a>
+        </div>
       </li>
     </ul>
   );

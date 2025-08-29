@@ -38,7 +38,6 @@ const EntEditor: React.FC<EntEditorProps> = ({ entToken, close }) => {
     if (name == "showBackground") {
       data = { ...data, showBackground: !formData.showBackground };
     }
-    console.log(data);
 
     setFormData(data);
     setEntToken(entToken.id, data);
