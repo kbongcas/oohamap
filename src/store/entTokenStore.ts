@@ -4,8 +4,7 @@ export interface EntToken {
   id: number;
   x: number;
   y: number;
-  scaleX: number;
-  scaleY: number;
+  scale: number;
   icon: string;
   label: string;
   showBackground: boolean;
@@ -15,8 +14,7 @@ export interface EntToken {
 export type UpdateEntToken = {
   x?: number;
   y?: number;
-  scaleX?: number;
-  scaleY?: number;
+  scale?: number;
   icon?: string;
   label?: string;
   showBackground?: boolean;
@@ -26,8 +24,7 @@ export type UpdateEntToken = {
 type AddEntToken = {
   x: number;
   y: number;
-  scaleX: number;
-  scaleY: number;
+  scale: number;
   icon: string;
   label: string;
   showBackground: boolean;

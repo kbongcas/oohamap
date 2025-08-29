@@ -12,6 +12,7 @@ type EntEditorFormData = {
   label: string;
   showBackground: boolean;
   color: string;
+  scale: number;
 };
 
 const EntEditor: React.FC<EntEditorProps> = ({ entToken, close }) => {
@@ -21,6 +22,7 @@ const EntEditor: React.FC<EntEditorProps> = ({ entToken, close }) => {
     label: entToken.label,
     showBackground: entToken.showBackground,
     color: entToken.color,
+    scale: entToken.scale,
   });
 
   useEffect(() => {
@@ -28,6 +30,7 @@ const EntEditor: React.FC<EntEditorProps> = ({ entToken, close }) => {
       label: entToken.label,
       showBackground: entToken.showBackground,
       color: entToken.color,
+      scale: entToken.scale,
     });
   }, [entToken]);
 
@@ -91,6 +94,20 @@ const EntEditor: React.FC<EntEditorProps> = ({ entToken, close }) => {
               />
               <legend className="fieldset-legend">Color</legend>
               <input id="color" name="color" type="color" value={formData.color} onChange={handleChange} />
+              <legend className="fieldset-legend">Size</legend>
+              <div className="w-full max-w-xs">
+                <input
+                  id="scale"
+                  name="scale"
+                  type="range"
+                  min={0.2}
+                  max={2.0}
+                  value={formData.scale}
+                  className="range range-xs"
+                  step={0.1}
+                  onChange={handleChange}
+                />
+              </div>
             </fieldset>
           </form>
         </div>

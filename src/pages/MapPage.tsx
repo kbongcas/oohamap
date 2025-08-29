@@ -79,8 +79,7 @@ function MapPage() {
       y: point.y,
       label: "pin",
       showBackground: false,
-      scaleX: tokenScale.x,
-      scaleY: tokenScale.y,
+      scale: 1,
       color: "#000000",
     });
   };
@@ -88,13 +87,14 @@ function MapPage() {
     event.preventDefault();
   };
 
-  const tokenScale = useMemo(() => {
+  // ensure token samze size even at different zoom levels
+  const tokenScaleZoomOffset = useMemo(() => {
     if (scale > TOKEN_SCALE_MAX) {
-      return { x: 1 / TOKEN_SCALE_MAX, y: 1 / TOKEN_SCALE_MAX };
+      return 1 / TOKEN_SCALE_MAX;
     } else if (scale < TOKEN_SCALE_MIN) {
-      return { x: 1 / TOKEN_SCALE_MIN, y: 1 / TOKEN_SCALE_MIN };
+      return 1 / TOKEN_SCALE_MIN;
     }
-    return { x: 1 / scale, y: 1 / scale };
+    return 1 / scale;
   }, [scale]);
 
   return (
@@ -107,6 +107,7 @@ function MapPage() {
           {tokens.map((m) => {
             return (
               <MapToken
+                scaleOffset={tokenScaleZoomOffset}
                 key={m.id}
                 entToken={m}
                 isSelected={selectedtoken?.id === m.id}

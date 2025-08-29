@@ -5,13 +5,16 @@ import icons, { DEFAULT_PATH_DATA, toIconName } from "../../utils/icons";
 import Konva from "konva";
 import type { EntToken } from "../../store/entTokenStore";
 
+const HOVER_SCALE = 1.2;
+
 interface MapTokenProps {
+  scaleOffset: number;
   isSelected: boolean;
   onSelected: (entToken: EntToken) => void;
   entToken: EntToken;
 }
 
-const MapToken: React.FC<MapTokenProps> = ({ onSelected, entToken, isSelected }) => {
+const MapToken: React.FC<MapTokenProps> = ({ onSelected, entToken, isSelected, scaleOffset }) => {
   const iconName = toIconName(entToken.icon);
   const pathData = icons[iconName].pathData ?? DEFAULT_PATH_DATA;
 
@@ -27,12 +30,21 @@ const MapToken: React.FC<MapTokenProps> = ({ onSelected, entToken, isSelected })
 
   const showHover = isSelected || isHovered;
 
+  const getScale = () => {
+    const base = isHovered ? entToken.scale * HOVER_SCALE : entToken.scale;
+    const withOffset = base * scaleOffset;
+
+    return {
+      x: withOffset,
+      y: withOffset,
+    };
+  };
+
   return (
     <Group
       x={entToken.x}
       y={entToken.y}
-      scaleX={isHovered ? entToken.scaleX * 1.2 : entToken.scaleX}
-      scaleY={isHovered ? entToken.scaleY * 1.2 : entToken.scaleY}
+      scale={getScale()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleClick}
