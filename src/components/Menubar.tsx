@@ -1,16 +1,14 @@
 import icons from "../utils/icons";
 
 const Menubar = () => {
-
-
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
-    event.dataTransfer.setData('text', event.currentTarget.id);
-    console.log("drag started id", event.currentTarget.id)
-  }
+    event.dataTransfer.setData("text", event.currentTarget.id);
+    console.log("drag started id", event.currentTarget.id);
+  };
 
-  const PinIcon = icons["pin"].comp
-  const HomeIcon = icons["home"].comp
-  const SwordIcon = icons["sword"].comp
+  const PinIcon = icons["pin"].reactComponent;
+  const HomeIcon = icons["home"].reactComponent;
+  const SwordIcon = icons["sword"].reactComponent;
 
   return (
     <ul className="menu menu-horizontal bg-base-200 rounded-box mt-6">
@@ -36,7 +34,7 @@ const Menubar = () => {
         </a>
       </li>
     </ul>
-  )
-}
+  );
+};
 
-export default Menubar
+export default Menubar;

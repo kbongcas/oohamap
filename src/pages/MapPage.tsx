@@ -77,10 +77,11 @@ function MapPage() {
       icon: icon,
       x: point.x,
       y: point.y,
-      label: icon,
+      label: "pin",
       showBackground: false,
       scaleX: tokenScale.x,
       scaleY: tokenScale.y,
+      color: "#000000",
     });
   };
   const enableDropping = (event: React.DragEvent<HTMLDivElement>) => {

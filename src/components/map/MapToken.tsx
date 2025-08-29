@@ -1,9 +1,7 @@
-import { Circle, Group, Image } from "react-konva";
-import pinSvg from "../../assets/icons/pin.svg";
-import useImage from "use-image";
+import { Circle, Group, Path } from "react-konva";
 import { Html } from "react-konva-utils";
 import { useState } from "react";
-import icons, { toIconName } from "../../utils/icons";
+import icons, { DEFAULT_PATH_DATA, toIconName } from "../../utils/icons";
 import Konva from "konva";
 import type { EntToken } from "../../store/entTokenStore";
 
@@ -15,11 +13,10 @@ interface MapTokenProps {
 
 const MapToken: React.FC<MapTokenProps> = ({ onSelected, entToken, isSelected }) => {
   const iconName = toIconName(entToken.icon);
-  const svg = icons[iconName].svg ?? pinSvg;
-  const [pinImage] = useImage(svg, "anonymous");
+  const pathData = icons[iconName].pathData ?? DEFAULT_PATH_DATA;
 
-  const width = pinImage?.width ?? 0;
-  const height = pinImage?.height ?? 0;
+  const width = 24;
+  const height = 24;
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -46,8 +43,17 @@ const MapToken: React.FC<MapTokenProps> = ({ onSelected, entToken, isSelected })
           <div className="tooltip tooltip-open bottom-9" data-tip={entToken.label}></div>
         </Html>
       )}
-      {entToken.showBackground && <Circle radius={width} scaleX={0.8} scaleY={0.8} fill="white" stroke={"black"} />}
-      <Image image={pinImage} offsetX={width / 2} offsetY={height / 2} />
+      {entToken.showBackground && <Circle radius={width * 0.8} fill="white" stroke={"black"} />}
+      <Path
+        offsetX={width / 2}
+        offsetY={height / 2}
+        data={pathData}
+        fill={entToken.color}
+        scale={{
+          x: 1,
+          y: 1,
+        }}
+      />
     </Group>
   );
 };

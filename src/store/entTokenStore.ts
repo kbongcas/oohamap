@@ -9,6 +9,7 @@ export interface EntToken {
   icon: string;
   label: string;
   showBackground: boolean;
+  color: string;
 }
 
 export type UpdateEntToken = {
@@ -19,6 +20,7 @@ export type UpdateEntToken = {
   icon?: string;
   label?: string;
   showBackground?: boolean;
+  color?: string;
 };
 
 type AddEntToken = {
@@ -29,6 +31,7 @@ type AddEntToken = {
   icon: string;
   label: string;
   showBackground: boolean;
+  color: string;
 };
 
 interface EntTokensActions {
@@ -66,4 +69,3 @@ export const useEntTokens = () => useEntTokenStore((state) => state.entTokens);
 export const useEntToken = (id: number) =>
   useEntTokenStore((state) => state.entTokens.find((entToken) => entToken.id === id));
 export const useEntTokensActions = () => useEntTokenStore((state) => state.actions);
-

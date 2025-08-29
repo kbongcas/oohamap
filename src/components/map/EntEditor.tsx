@@ -11,6 +11,7 @@ interface EntEditorProps {
 type EntEditorFormData = {
   label: string;
   showBackground: boolean;
+  color: string;
 };
 
 const EntEditor: React.FC<EntEditorProps> = ({ entToken, close }) => {
@@ -19,19 +20,25 @@ const EntEditor: React.FC<EntEditorProps> = ({ entToken, close }) => {
   const [formData, setFormData] = useState<EntEditorFormData>({
     label: entToken.label,
     showBackground: entToken.showBackground,
+    color: entToken.color,
   });
 
   useEffect(() => {
     setFormData({
       label: entToken.label,
       showBackground: entToken.showBackground,
+      color: entToken.color,
     });
   }, [entToken]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    const data = { ...formData, [name]: value, showBackground: !formData.showBackground };
+    let data = { ...formData, [name]: value };
+    if (name == "showBackground") {
+      data = { ...data, showBackground: !formData.showBackground };
+    }
+    console.log(data);
 
     setFormData(data);
     setEntToken(entToken.id, data);
@@ -74,8 +81,17 @@ const EntEditor: React.FC<EntEditorProps> = ({ entToken, close }) => {
                 />
                 Token Background
               </label>
+              <legend className="fieldset-legend">Label</legend>
+              <input
+                type="text"
+                className="input"
+                placeholder={entToken.label}
+                id="label"
+                name="label"
+                onChange={handleChange}
+              />
               <legend className="fieldset-legend">Color</legend>
-              <input type="text" className="input" placeholder="Type here" />
+              <input id="color" name="color" type="color" value={formData.color} onChange={handleChange} />
             </fieldset>
           </form>
         </div>
