@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@microsoft/signalr": "^9.0.6",
+    "@supabase/supabase-js": "^2.56.1",
     "@tailwindcss/vite": "^4.1.12",
     "@tiptap/extension-highlight": "^3.3.0",
     "@tiptap/extension-text-style": "^3.3.0",

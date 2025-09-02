@@ -1,11 +1,14 @@
 import { useMemo, useRef, useState } from "react";
-import { Layer, Stage, Image } from "react-konva";
+import { Layer, Stage, Image, Circle } from "react-konva";
 import Konva from "konva";
 import useImage from "use-image";
 import Menubar from "../components/Menubar";
 import MapToken from "../components/map/MapToken";
 import { useEntTokens, type EntToken, useEntTokensActions } from "../store/entTokenStore";
 import EntEditor from "../components/map/EntEditor";
+import PresenceBar from "../components/PresenceBar";
+import { useUserPresences } from "../hooks/use-user-presences";
+import { useCursorPresences } from "../hooks/use-cursor-presences";
 
 const SCALE_BY = 1.2;
 const TOKEN_SCALE_MIN = 0.9;
@@ -97,11 +100,38 @@ function MapPage() {
     return 1 / scale;
   }, [scale]);
 
+  // presence
+  const { userPresences } = useUserPresences("kevin1");
+  const { cursors, pushCursor } = useCursorPresences({
+    roomName: "kevin1",
+    throttleMs: 40,
+  });
+
+  const onPointerMove = () => {
+    const stage = stageRef.current;
+    if (stage === null) return;
+
+    const pointer = stage.getPointerPosition();
+    if (pointer === null) return;
+
+    const point = {
+      x: (pointer.x - stage.x()) / scale,
+      y: (pointer.y - stage.y()) / scale,
+    };
+    pushCursor({
+      x: point.x,
+      y: point.y,
+    });
+  };
+
   return (
     <div onDragOver={enableDropping} onDrop={handleDrop}>
-      <Stage width={width} height={height} ref={stageRef} onWheel={handleWheel} draggable>
+      <Stage width={width} height={height} ref={stageRef} onWheel={handleWheel} draggable onPointerMove={onPointerMove}>
         <Layer className="border-2">
           <Image image={map} />
+          {Object.values(cursors).map((c, idx) => (
+            <Circle key={idx} x={c.position.x - 2.5} y={c.position.y - 2.5} radius={5} fill={"green"} />
+          ))}
         </Layer>
         <Layer className="border-2">
           {tokens.map((m) => {
@@ -118,7 +148,10 @@ function MapPage() {
         </Layer>
       </Stage>
       <div className="absolute top-[12px] right-[12px] flex flex-col items-end gap-4">
-        <Menubar />
+        <div className="flex flex-row items-center gap-4">
+          <PresenceBar users={userPresences} />
+          <Menubar />
+        </div>
         {selectedtoken != null && <EntEditor entToken={selectedtoken} close={() => setSelectedToken(null)} />}
       </div>
     </div>

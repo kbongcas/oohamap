@@ -12,7 +12,7 @@ const Menubar = () => {
   };
 
   return (
-    <ul className="menu menu-horizontal bg-base-200 rounded-box mt-6">
+    <ul className="menu menu-horizontal bg-base-200 rounded-box">
       <li>
         <div draggable id="pin" onDragStart={handleDragStart} className="bg-opacity-0">
           <a className="tooltip" data-tip="pin">
