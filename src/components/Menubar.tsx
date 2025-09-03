@@ -12,29 +12,17 @@ const Menubar = () => {
   };
 
   return (
-    <ul className="menu menu-horizontal bg-base-200 rounded-box">
-      <li>
-        <div draggable id="pin" onDragStart={handleDragStart} className="bg-opacity-0">
-          <a className="tooltip" data-tip="pin">
-            <PinIcon />
-          </a>
-        </div>
-      </li>
-      <li>
-        <div draggable id="sword" onDragStart={handleDragStart} className="bg-opacity-0">
-          <a className="tooltip" data-tip="sword">
-            <SwordIcon />
-          </a>
-        </div>
-      </li>
-      <li>
-        <div draggable id="home" onDragStart={handleDragStart} className="bg-opacity-0">
-          <a className="tooltip" data-tip="home">
-            <HomeIcon />
-          </a>
-        </div>
-      </li>
-    </ul>
+    <div className="flex gap-1">
+      <div draggable id="pin" onDragStart={handleDragStart} className="btn btn-circle btn-sm">
+        <PinIcon />
+      </div>
+      <div draggable id="home" onDragStart={handleDragStart} className="btn btn-circle btn-sm">
+        <HomeIcon />
+      </div>
+      <div draggable id="sword" onDragStart={handleDragStart} className="btn btn-circle btn-sm">
+        <SwordIcon />
+      </div>
+    </div>
   );
 };
 

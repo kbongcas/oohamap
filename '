@@ -127,45 +127,40 @@ function MapPage() {
 
   return (
     <div>
-      <div className="navbar bg-neutral text-neutral-content gap-4 justify-end min-h-0 h-12">
-        <PresenceBar users={userPresences} />
-        <Menubar />
-        <MapBar />
-      </div>
-      <div onDragOver={enableDropping} onDrop={handleDrop}>
-        <Stage
-          width={width}
-          height={height}
-          ref={stageRef}
-          onWheel={handleWheel}
-          draggable
-          onPointerMove={onPointerMove}
-        >
-          <Layer className="border-2">
-            <Image image={map} />
-            {Object.values(cursors).map((c, idx) => (
-              <Circle key={idx} x={c.position.x - 2.5} y={c.position.y - 2.5} radius={5} fill={"green"} />
-            ))}
-          </Layer>
-          <Layer className="border-2">
-            {tokens.map((m) => {
-              return (
-                <MapToken
-                  scaleOffset={tokenScaleZoomOffset}
-                  key={m.id}
-                  entToken={m}
-                  isSelected={selectedtoken?.id === m.id}
-                  onSelected={(entToken) => setSelectedToken(entToken)}
-                />
-              );
-            })}
-          </Layer>
-        </Stage>
-        <div className="absolute top-[12px] right-[12px] flex flex-col items-end gap-4">
-          <div className="flex flex-row items-center gap-4"></div>
-          {selectedtoken != null && <EntEditor entToken={selectedtoken} close={() => setSelectedToken(null)} />}
+      <div className="navbar bg-base-500 shadow-sm">
+  <a className="btn btn-ghost text-xl">daisyUI</a>
+</div>
+    <div onDragOver={enableDropping} onDrop={handleDrop}>
+      <Stage width={width} height={height} ref={stageRef} onWheel={handleWheel} draggable onPointerMove={onPointerMove}>
+        <Layer className="border-2">
+          <Image image={map} />
+          {Object.values(cursors).map((c, idx) => (
+            <Circle key={idx} x={c.position.x - 2.5} y={c.position.y - 2.5} radius={5} fill={"green"} />
+          ))}
+        </Layer>
+        <Layer className="border-2">
+          {tokens.map((m) => {
+            return (
+              <MapToken
+                scaleOffset={tokenScaleZoomOffset}
+                key={m.id}
+                entToken={m}
+                isSelected={selectedtoken?.id === m.id}
+                onSelected={(entToken) => setSelectedToken(entToken)}
+              />
+            );
+          })}
+        </Layer>
+      </Stage>
+      <div className="absolute top-[12px] right-[12px] flex flex-col items-end gap-4">
+        <div className="flex flex-row items-center gap-4">
+          <PresenceBar users={userPresences} />
+          <Menubar />
+          <MapBar />
         </div>
+        {selectedtoken != null && <EntEditor entToken={selectedtoken} close={() => setSelectedToken(null)} />}
       </div>
+    </div>
     </div>
   );
 }
